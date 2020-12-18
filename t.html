@@ -6,7 +6,6 @@
 {% import random %}
 {% from gramex.config import variables %}
 
-{% set choice = random.choice(['t1.html', 't2.html']) %}
 {% set fonts = ['Open Sans', 'Roboto', 'Lato', 'Montserrat'] %}
 {% set font_choice = random.choice(fonts) %}
 {% set padding_choice = random.choice(range(0, 5)) %}
@@ -16,9 +15,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <title>Access Violations</title>
+  <title>Gramex Random UI Creation Bot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- <link rel="stylesheet" href="{{ base_css }}/style-template.scss"> -->
   <link rel="stylesheet" href="{{ base_css }}/ui/theme/{{ theme_choice }}.scss">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family={{font_choice}}:wght@300&display=swap" rel="stylesheet">
@@ -29,4 +27,4 @@
   </style>
 </head>
 
-{% module Template(os.path.join(base, choice), margin_choice=margin_choice, padding_choice=padding_choice) %}
+{% module Template(os.path.join(base, 't2.html'), margin_choice=margin_choice, padding_choice=padding_choice) %}
