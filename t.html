@@ -1,17 +1,23 @@
 <!doctype html>
 <html lang="en">
-{% set base = 'grandbot' %}
+{% set base = '.' %}
 {% set base_css = '.' %}
 {% import os %}
 {% import random %}
+{% import json %}
 {% from gramex.config import variables %}
 
+{% set layout_choice = ['carddeck', 'data-table'] %}
 {% set fonts = ['Open Sans', 'Roboto', 'Lato', 'Montserrat'] %}
 {% set font_choice = random.choice(fonts) %}
 {% set padding_choice = random.choice(range(0, 5)) %}
 {% set margin_choice = random.choice(range(0, 5)) %}
 {% set theme_choice = random.choice(variables['themes']) %}
-
+{% set random.shuffle(layout_choice) %}
+{% set tmpl_kwargs = dict(margin_choice=margin_choice, padding_choice=padding_choice, layout_choice=layout_choice, base=base) %}
+{% set config = tmpl_kwargs.copy() %}
+{% set config.update(dict(font_choice=font_choice, theme_choice=theme_choice)) %}
+{% set config.pop('base') %}
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -26,5 +32,21 @@
     }
   </style>
 </head>
+<script src="{{ base }}/ui/jquery/dist/jquery.min.js"></script>
+<script src="{{ base }}/ui/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui/lodash/lodash.min.js"></script>
+<script src="ui/g1/dist/g1.min.js"></script>
 
-{% module Template(os.path.join(base, 't2.html'), margin_choice=margin_choice, padding_choice=padding_choice) %}
+
+<div class="divider"><btn class="btn btn-primary align-items-center" id="random">Randomize</btn></div>
+<div class="container" id="maincontainer">
+{% module Template(os.path.join(base, 't2.html'), tmpl_kwargs=tmpl_kwargs) %}
+</div>
+<div class="divider"></div>
+<p class="text-center">
+  {% raw json.dumps(config) %}
+</p>
+
+<script>
+  $('#random').click(() => {location.reload()})
+</script>

@@ -43,6 +43,14 @@ variables:
 # Configurations for app: access-violations
 # ----------------------------------------------------------------------------
 url:
+  randomized-template:
+    pattern: /$YAMLURL/randomize
+    handler: FileHandler
+    kwargs:
+      path: $YAMLPATH/t2.html
+      template: true
+      headers:
+        Cache-Control: no-store
   access-violations-home:
     pattern: /$YAMLURL/
     handler: FileHandler

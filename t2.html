@@ -1,107 +1,17 @@
-{% set base = '.' %}
 <body>
+  {% import os %}
+  {% set base = tmpl_kwargs['base'] %}
   <!-- TODO: Filter bars -->
   {% include template-navbar-t2.html %}
   <div class="container-fluid py-4">
-    <div class="card-deck my-2">
-      <div class="card mx-{{ margin_choice }} border">
-        <div class="card-header bg-white d-flex justify-content-between py-1">
-          <h5 class="card-title my-0 text-uppercase font-weight-bold h6">Out of policy</h5>
-        </div><!-- .card-header -->
-        <div class="card-body">
-          <div class="d-flex">
-            <p>
-              <span class="h6 d-block my-0">Open Violations</span>
-              <span class="h1">
-                <a class="text-decoration-none" href="{{ base }}/violations" target="_blank" rel="noreferrer">1972</a>
-              </span>
-            </p>
-            <p class="sm1 ml-4 pl-4">
-              21 High priority violations occurred this week, most of them for the app Epic customer database.
-            </p>
-          </div>
-          <img class="img-fluid" src="{{ base }}/assets/img/out-of-policy.png" alt="out of policy chart" >
-        </div><!-- .card-body -->
-      </div><!-- .card -->
-      <div class="card mx-{{ margin_choice }} border">
-        <div class="card-header bg-white d-flex justify-content-between py-1">
-          <h5 class="card-title my-0 text-uppercase font-weight-bold h6">Separation of duty</h5>
-        </div><!-- .card-header -->
-        <div class="card-body">
-          <div class="d-flex">
-            <p>
-              <span class="h6 d-block my-0">Source Organizations</span>
-              <span class="h1">
-                <a class="text-decoration-none" href="{{ base }}/violations" target="_blank" rel="noreferrer">12</a>
-              </span>
-            </p>
-            <p class="sm1 ml-4 pl-4">
-              21 High priority violations occurred this week, most of them for the app Epic customer database.
-            </p>
-          </div>
-          <img class="img-fluid" src="{{ base }}/assets/img/out-of-policy.png" alt="out of policy chart" >
-        </div><!-- .card-body -->
-      </div><!-- .card -->
-      <div class="card mx-{{ margin_choice }} border">
-        <div class="card-header bg-white d-flex justify-content-between py-1">
-          <h5 class="card-title my-0 text-uppercase font-weight-bold h6">Certification policy</h5>
-        </div><!-- .card-header -->
-        <div class="card-body">
-          <div class="d-flex">
-            <p>
-              <span class="h6 d-block my-0">Job roles</span>
-              <span class="h1">
-                <a class="text-decoration-none" href="{{ base }}/violations" target="_blank" rel="noreferrer">12</a>
-              </span>
-            </p>
-            <p class="sm1 ml-4 pl-4">
-              21 High priority violations occurred this week, most of them for the app Epic customer database.
-            </p>
-          </div>
-          <img class="img-fluid" src="{{ base }}/assets/img/out-of-policy.png" alt="out of policy chart" >
-        </div><!-- .card-body -->
-      </div><!-- .card -->
-    </div>
-    <section class="mx-{{ margin_choice }} py-{{ padding_choice }}">
-      <div class="row mx-{{ margin_choice }}">
-        <div class="col-12">
-          <h3>Access Violations Data</h3>
-          <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <a class="nav-link active" id="key-drivers-tab" data-toggle="tab" href="#key-drivers" role="tab" aria-controls="key-drivers" aria-selected="true">Data</a>
-            </li>
-            <li class="nav-item" role="presentation">
-              <a class="nav-link" id="relationships-tab" data-toggle="tab" href="#relationships" role="tab" aria-controls="relationships" aria-selected="false">Relationships</a>
-            </li>
-          </ul>
-          <div class="tab-content" id="myTabContent">
-            <div class="tab-pane fade show active" id="key-drivers" role="tabpanel" aria-labelledby="key-drivers-tab">
-              <div class="formhandler pt-3 mt-3" data-src="data"></div>
-            </div>
-            <div class="tab-pane fade w-100" id="relationships" role="tabpanel" aria-labelledby="relationships-tab">
-              TBD
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    {% for comp in tmpl_kwargs['layout_choice'] %}
+      {% module Template(os.path.join(base, comp + '.html'), **tmpl_kwargs) %}
+    {% end %}
   </div><!-- .container-fluid -->
 
-  <script src="{{ base }}/ui/jquery/dist/jquery.min.js"></script>
-  <script src="{{ base }}/ui/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="ui/lodash/lodash.min.js"></script>
-  <script src="ui/g1/dist/g1.min.js"></script>
   <script>
     $('.formhandler').formhandler({
       pageSize: 5
     })
   </script>
-  <!-- Commonly used libraries:
-  <script src="ui/d3v5/dist/d3.min.js"></script>
-  <script src="ui/morphdom/dist/morphdom-umd.min.js"></script>
-  <script src="ui/dayjs/dayjs.min.js"></script>
-  <script src="ui/daterangepicker/daterangepicker.js"></script>
-  <script src="ui/leaflet/dist/leaflet.js"></script>
-  <script src="ui/topojson/dist/topojson.min.js"></script>
-  -->
 </body>
