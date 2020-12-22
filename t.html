@@ -1,30 +1,115 @@
 <!doctype html>
 <html lang="en">
-{% set base = 'grandbot' %}
+{% set base = '.' %}
 {% set base_css = '.' %}
 {% import os %}
 {% import random %}
+{% import json %}
+{% import time %}
+{% import datetime %}
 {% from gramex.config import variables %}
 
+{% set layout_choice = ['carddeck', 'data-table'] %}
 {% set fonts = ['Open Sans', 'Roboto', 'Lato', 'Montserrat'] %}
 {% set font_choice = random.choice(fonts) %}
 {% set padding_choice = random.choice(range(0, 5)) %}
 {% set margin_choice = random.choice(range(0, 5)) %}
 {% set theme_choice = random.choice(variables['themes']) %}
-
+{% set random.shuffle(layout_choice) %}
+{% set tmpl_kwargs = dict(margin_choice=margin_choice, padding_choice=padding_choice, layout_choice=layout_choice, base=base) %}
+{% set config = tmpl_kwargs.copy() %}
+{% set config.update(dict(font_choice=font_choice, theme_choice=theme_choice)) %}
+{% set config.pop('base') %}
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <title>Gramex Random UI Creation Bot</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{{ base_css }}/ui/theme/{{ theme_choice }}.scss">
+  <link rel="stylesheet" href="ui/@fortawesome/fontawesome-free/css/all.min.css"><!-- v5 icons -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family={{font_choice}}:wght@300&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: {{ font_choice }}, sans-serif;
     }
+    form.feedback {
+      right: 5%;
+      bottom: 5%;
+    }
   </style>
 </head>
+<script src="{{ base }}/ui/jquery/dist/jquery.min.js"></script>
+<script src="{{ base }}/ui/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="ui/lodash/lodash.min.js"></script>
+<script src="ui/g1/dist/g1.min.js"></script>
 
-{% module Template(os.path.join(base, 't2.html'), margin_choice=margin_choice, padding_choice=padding_choice) %}
+<div class="divider">
+  <btn class="btn btn-primary align-items-center" id="random">Randomize</btn>
+</div>
+<div class="container" id="maincontainer">
+{% module Template(os.path.join(base, 't2.html'), tmpl_kwargs=tmpl_kwargs) %}
+</div>
+<div class="divider"></div>
+<div class="container">
+  <h3>About</h3>
+  <p>
+    Grandbot randomizes layouts and stylizes using different UI themes, fonts, margins, and paddings.
+  </p>
+  <p>
+    Current view uses the config <code>{% raw json.dumps(config) %}</code>
+  </p>
+</div>
+
+<form class="feedback position-fixed text-center" data-url="feedback">
+  <div class="py-3">
+    <div class="form-check d-inline">
+      <input class="form-check-input" type="radio" name="helpful" id="helpful-yes" value="y">
+      <label class="form-check-label" for="helpful-yes">
+        <i class="far fa-thumbs-up"></i> Like
+      </label>
+    </div>
+    <div class="form-check d-inline">
+      <input class="form-check-input" type="radio" name="helpful" id="helpful-no" value="n">
+      <label class="form-check-label" for="helpful-no">
+        <i class="far fa-thumbs-down"></i> No
+      </label>
+    </div>
+  </div>
+  <div class="py-3 feedback-details d-none">
+    <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+  </div>
+  <div class="py-3 feedback-thanks d-none">
+    Thanks for your feedback.
+  </div>
+  {% set td = datetime.datetime.today() %}
+  <input type="hidden" name="feedback_time" value="{{ int(time.mktime(td.timetuple())) }}">
+  <input type="hidden" name="config" value="{{ json.dumps(config) }}">
+</form>
+
+<script>
+  $('#random').click(() => {location.reload()})
+
+  // When Feedback "Yes" or "No" is selected
+  $('.feedback').on('change', '[type="radio"]', function () {
+    // Show feedback-text and buttons
+    $('.feedback-details').removeClass('d-none')
+    // Make feedback text if "No", not otherwise
+    if ($('#helpful-no').is(':checked'))
+      $('.feedback-text').attr('required', true)
+    else
+      $('.feedback-text').removeAttr('required')
+  }).on('reset', function () {
+    // When reset, hide feedback-text and submit buttons
+    /* $('.feedback-details').addClass('d-none') */
+  }).on('submit', function (e) {
+    e.preventDefault()
+    $.ajax({
+      url: $('.feedback').data('url'),
+      method: 'POST',
+      data: $('.feedback').serialize()
+    })
+    $('.feedback-details').addClass('d-none')
+    $('.feedback-thanks').removeClass('d-none')
+  })
+</script>
