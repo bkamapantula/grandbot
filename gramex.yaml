@@ -2,6 +2,9 @@
 # on 2020-12-02 by bhanu.k <bhanu.kamapantula@gramener.com>
 
 variables:
+  feedback_db: sqlite:///$GRAMEXDATA/grandbot/grandbot.db
+  feedback_table: feedback
+  feedback_id: id
   themes:
     - "default"
     - "bootswatch/cerulean"
@@ -40,7 +43,7 @@ variables:
     - "themes-guide/signal"
     - "themes-guide/tequila"
 
-# Configurations for app: access-violations
+# Configurations for app: grandbot
 # ----------------------------------------------------------------------------
 url:
   randomized-template:
@@ -51,11 +54,11 @@ url:
       template: true
       headers:
         Cache-Control: no-store
-  access-violations-home:
+  grandbot-home:
     pattern: /$YAMLURL/
     handler: FileHandler
     kwargs:
-      path: $YAMLPATH/index.html
+      path: $YAMLPATH/t.html
       # See https://learn.gramener.com/guide/auth/#authorization for auth rules
       auth:
         login_url: /$YAMLURL/login/
@@ -66,21 +69,7 @@ url:
         Cache-Control: private, max-age=1
     cache: {expiry: {duration: 1}}
 
-  access-violations-violations:
-    pattern: /$YAMLURL/violations
-    handler: FileHandler
-    kwargs:
-      path: $YAMLPATH/violations.html
-      # See https://learn.gramener.com/guide/auth/#authorization for auth rules
-      auth:
-        login_url: /$YAMLURL/login/
-      template: true
-      headers:
-        # Templates may have user-specific content. Cache privately.
-        # Keep max-age small (in case we log out & log in as another user.)
-        Cache-Control: private, max-age=1
-    cache: {expiry: {duration: 1}}
-  access-violations-login:
+  grandbot-login:
     pattern: /$YAMLURL/login/
     # You MUST change the auth before deploying. DBAuth is commonly used.
     # See https://learn.gramener.com/guide/auth/#database-auth
@@ -91,37 +80,32 @@ url:
         alpha: alpha
         beta: beta
 
-  access-violations/csv_endpoint_:
+  grandbot/csv_endpoint_:
     pattern: /$YAMLURL/data
     handler: FormHandler
     kwargs:
-      # prepare: project_app.prepare_args
       url: $YAMLPATH/assets/data/IAM - Dummy Data.csv
-      #auth: &HEADERS
-
-  ui-templates:
+  grandbot/layouts:
     pattern: /$YAMLURL/gen
     handler: FileHandler
     kwargs:
-      # path: $YAMLPATH/gen.html
       path: $YAMLPATH/t.html
       template: true
-
-  ui-templates/templates/1:
-    pattern: /$YAMLURL/t1
-    handler: FileHandler
-    kwargs:
-      path: $YAMLPATH/t1.html
-      template: true
-
-  ui-templates/templates/2:
+  grandbot/templates/2:
     pattern: /$YAMLURL/t2
     handler: FileHandler
     kwargs:
       path: $YAMLPATH/t2.html
       template: true
+  grandbot/feedback:
+    pattern: /$YAMLURL/feedback
+    handler: FormHandler
+    kwargs:
+      url: $feedback_db
+      table: $feedback_table
+      id: $feedback_id
 
-  access-violations-logout:
+  grandbot-logout:
     pattern: /$YAMLURL/logout/
     handler: LogoutHandler
 
@@ -132,7 +116,7 @@ test:
     password: alpha
 
 
-# Gramex init configurations for app: access-violations
+# Gramex init configurations for app: grandbot
 # ----------------------------------------------------------------------------
 import:
   # To secure application for production,
