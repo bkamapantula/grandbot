@@ -84,7 +84,7 @@ url:
     pattern: /$YAMLURL/data
     handler: FormHandler
     kwargs:
-      url: $YAMLPATH/assets/data/IAM - Dummy Data.csv
+      url: $YAMLPATH/assets/data/access-violations.csv
   grandbot/layouts:
     pattern: /$YAMLURL/gen
     handler: FileHandler

@@ -5,6 +5,8 @@
 # Do not commit passwords, keys or any, secret information. Store it in .secrets.yaml instead
 .secret*
 
+# ignore gramexcharts
+gramexcharts/
 
 # Ignore npm and bower modules. These should be created by yarn/npm and bower.
 node_modules/

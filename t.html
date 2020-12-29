@@ -8,6 +8,7 @@
 {% import time %}
 {% import datetime %}
 {% from gramex.config import variables %}
+{% import grandbot %}
 
 {% set layout_choice = ['carddeck', 'data-table'] %}
 {% set fonts = ['Open Sans', 'Roboto', 'Lato', 'Montserrat'] %}
@@ -16,10 +17,14 @@
 {% set margin_choice = random.choice(range(0, 5)) %}
 {% set theme_choice = random.choice(variables['themes']) %}
 {% set random.shuffle(layout_choice) %}
-{% set tmpl_kwargs = dict(margin_choice=margin_choice, padding_choice=padding_choice, layout_choice=layout_choice, base=base) %}
+{% set data_choice = random.choice(['access-violations.csv', 'funnel.csv', 'heatmap.csv', 'grouplollipop.csv', 'student.csv']) %}
+{% set tmpl_kwargs = dict(margin_choice=margin_choice, padding_choice=padding_choice, layout_choice=layout_choice, base=base, data_choice=data_choice) %}
 {% set config = tmpl_kwargs.copy() %}
 {% set config.update(dict(font_choice=font_choice, theme_choice=theme_choice)) %}
 {% set config.pop('base') %}
+
+{% set charts = grandbot.charts(data_choice) %}
+{% set charts_data = charts['data'] %}
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -37,18 +42,24 @@
       right: 5%;
       bottom: 5%;
     }
+    .chart-1 {
+      width: 58vw;
+      max-height: 60vw;
+    }
   </style>
 </head>
 <script src="{{ base }}/ui/jquery/dist/jquery.min.js"></script>
 <script src="{{ base }}/ui/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="ui/lodash/lodash.min.js"></script>
 <script src="ui/g1/dist/g1.min.js"></script>
-
+<script src="{{ base }}/node_modules/vega/build/vega.min.js"></script>
+<script src="{{ base }}/node_modules/vega-tooltip/build/vega-tooltip.min.js"></script>
+<script src="{{ base }}/ui/d3v5/dist/d3.min.js"></script><!-- d3 v5 -->
 <div class="divider">
   <btn class="btn btn-primary align-items-center" id="random">Randomize</btn>
 </div>
 <div class="container" id="maincontainer">
-{% module Template(os.path.join(base, 't2.html'), tmpl_kwargs=tmpl_kwargs) %}
+{% module Template(os.path.join(base, 't2.html'), tmpl_kwargs=tmpl_kwargs, charts_data=charts_data) %}
 </div>
 <div class="divider"></div>
 <div class="container">
@@ -86,6 +97,13 @@
   <input type="hidden" name="feedback_time" value="{{ int(time.mktime(td.timetuple())) }}">
   <input type="hidden" name="config" value="{{ json.dumps(config) }}">
 </form>
+
+{% for ind, chart in enumerate(charts['charts']) %}
+  <script src="gramexcharts/charts/{{ chart }}/index.js"></script>
+  <script>
+    draw(data, $('.chart-{{ ind + 1 }}').get(0), {width: 200, height: 150})
+  </script>
+{% end %}
 
 <script>
   $('#random').click(() => {location.reload()})

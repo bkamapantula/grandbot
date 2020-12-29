@@ -11,7 +11,8 @@
 
   <script>
     $('.formhandler').formhandler({
-      pageSize: 5
+      pageSize: 5,
+      data: JSON.parse('{% raw charts_data.to_json(orient="records") %}')
     })
   </script>
 </body>
