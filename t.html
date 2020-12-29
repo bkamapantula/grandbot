@@ -70,6 +70,9 @@
   <p>
     Current view uses the config <code>{% raw json.dumps(config) %}</code>
   </p>
+  {% for k, opt in config.items() %}
+    <p><input type="checkbox" class="urlfilter" name="{{ k }}" value="{{ opt }}" data-mode="toggle"> {{ k }}={{ opt }} </label></p>
+  {% end %}
 </div>
 
 <form class="feedback position-fixed text-center" data-url="feedback">
@@ -107,6 +110,7 @@
 
 <script>
   $('#random').click(() => {location.reload()})
+  $('body').urlfilter()
 
   // When Feedback "Yes" or "No" is selected
   $('.feedback').on('change', '[type="radio"]', function () {
@@ -131,3 +135,11 @@
     $('.feedback-thanks').removeClass('d-none')
   })
 </script>
+
+<!--
+TODO:
+
+- retain selected options, even on refresh
+- persist URL parameters
+- chart dimensions to be consistent
+-->
