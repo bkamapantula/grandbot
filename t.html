@@ -10,18 +10,22 @@
 {% from gramex.config import variables %}
 {% import grandbot %}
 
+{% set user_opts = {k: json.loads(v[0]) for k, v in handler.args.items() } %}
+
 {% set layout_choice = ['carddeck', 'data-table'] %}
 {% set fonts = ['Open Sans', 'Roboto', 'Lato', 'Montserrat'] %}
-{% set font_choice = random.choice(fonts) %}
-{% set padding_choice = random.choice(range(0, 5)) %}
-{% set margin_choice = random.choice(range(0, 5)) %}
-{% set theme_choice = random.choice(variables['themes']) %}
+{% set font_choice = user_opts.get('font_choice', random.choice(fonts)) %}
+{% set padding_choice = user_opts.get('padding_choice', random.choice(range(0, 5))) %}
+{% set margin_choice = user_opts.get('margin_choice', random.choice(range(0, 5))) %}
+{% set theme_choice = user_opts.get('theme_choice', random.choice(variables['themes'])) %}
 {% set random.shuffle(layout_choice) %}
-{% set data_choice = random.choice(['access-violations.csv', 'funnel.csv', 'heatmap.csv', 'grouplollipop.csv', 'student.csv']) %}
+{% set data_choice = user_opts.get('data_choice', random.choice(['access-violations.csv', 'funnel.csv', 'heatmap.csv', 'grouplollipop.csv', 'student.csv'])) %}
 {% set tmpl_kwargs = dict(margin_choice=margin_choice, padding_choice=padding_choice, layout_choice=layout_choice, base=base, data_choice=data_choice) %}
 {% set config = tmpl_kwargs.copy() %}
 {% set config.update(dict(font_choice=font_choice, theme_choice=theme_choice)) %}
 {% set config.pop('base') %}
+{% set config.update(user_opts) %}
+{% set print(config) %}
 
 {% set charts = grandbot.charts(data_choice) %}
 {% set charts_data = charts['data'] %}
@@ -71,7 +75,8 @@
     Current view uses the config <code>{% raw json.dumps(config) %}</code>
   </p>
   {% for k, opt in config.items() %}
-    <p><input type="checkbox" class="urlfilter" name="{{ k }}" value="{{ opt }}" data-mode="toggle"> {{ k }}={{ opt }} </label></p>
+  {% set checked = "checked" if user_opts.get(k, '') == opt else "" %}
+  <p><input type="checkbox" class="urlfilter" name="{{ k }}" value="{{ json.dumps(opt) }}" data-mode="toggle" {{ checked }}> {{ k }}={{ opt }} </label></p>
   {% end %}
 </div>
 
@@ -134,6 +139,7 @@
     $('.feedback-details').addClass('d-none')
     $('.feedback-thanks').removeClass('d-none')
   })
+
 </script>
 
 <!--
