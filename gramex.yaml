@@ -46,6 +46,14 @@ variables:
 # Configurations for app: grandbot
 # ----------------------------------------------------------------------------
 url:
+  grandbot-export:
+    pattern: /$YAMLURL/export
+    handler: FunctionHandler
+    kwargs:
+      function: grandbot.export
+      headers:
+        Content-Type: application/zip
+        Content-Disposition: attachment; filename=download.zip
   randomized-template:
     pattern: /$YAMLURL/randomize
     handler: FileHandler
