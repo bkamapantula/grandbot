@@ -9,6 +9,7 @@
 {% import datetime %}
 {% from gramex.config import variables %}
 {% import grandbot %}
+{% import urllib %}
 
 {% set user_opts = {k: json.loads(v[0]) for k, v in handler.args.items() } %}
 
@@ -25,7 +26,6 @@
 {% set config.update(dict(font_choice=font_choice, theme_choice=theme_choice)) %}
 {% set config.pop('base') %}
 {% set config.update(user_opts) %}
-{% set print(config) %}
 
 {% set charts = grandbot.charts(data_choice) %}
 {% set charts_data = charts['data'] %}
@@ -59,8 +59,9 @@
 <script src="{{ base }}/node_modules/vega/build/vega.min.js"></script>
 <script src="{{ base }}/node_modules/vega-tooltip/build/vega-tooltip.min.js"></script>
 <script src="{{ base }}/ui/d3v5/dist/d3.min.js"></script><!-- d3 v5 -->
-<div class="divider">
+<div class="container d-flex justify-content-between my-4">
   <btn class="btn btn-primary align-items-center" id="random">Randomize</btn>
+  <a class="btn btn-primary align-items-center" id="export" href="export?{{ urllib.parse.urlencode(config, doseq=True) }}" target="_blank" rel="noopener">Export</a>
 </div>
 <div class="container" id="maincontainer">
 {% module Template(os.path.join(base, 't2.html'), tmpl_kwargs=tmpl_kwargs, charts_data=charts_data) %}
