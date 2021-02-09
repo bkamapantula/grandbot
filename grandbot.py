@@ -22,13 +22,17 @@ def charts(choice):
     return {'charts': results['chart_list'], 'data': df}
 
 
+def render_template(fpath, **args):
+    with open(fpath, 'r') as fout:
+        return Template(fout.read()).generate(**args)
+
+
 def export(handler):
     # args = {k: json.loads(v[0]) for k, v in handler.args.items()}
     args = {k: v for k, v in handler.args.items()}
-    print(args)
+    args['charts_data'] = charts(handler.get_argument('data_choice'))['data']
     with open('download.html') as fout:
         tmpl = Template(fout.read()).generate(**args)
-    print(tmpl)
     with TemporaryFile() as tf:
         with ZipFile(tf, 'w', ZIP_DEFLATED) as arch:
             # Write the template
